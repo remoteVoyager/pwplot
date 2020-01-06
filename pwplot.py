@@ -33,8 +33,10 @@ def multi_plot(data, argum, argum_unit='-', file_format='png', var_ys=None, var_
     if var_units is None:
         var_units = ['' for i in range(len(var_ys))]
 
-    if not os.path.exists('plots/'):
-        os.mkdir('plots')
+    path = 'plots_' + file_format + '/'
+
+    if not os.path.exists(path):
+        os.mkdir(path)
 
     # plotting
     for s, suni, jedn in zip(var_ys, var_unicodes, var_units):
@@ -43,7 +45,7 @@ def multi_plot(data, argum, argum_unit='-', file_format='png', var_ys=None, var_
         # TODO: multiple size plots
         plt.figure(figsize=[8.3, 11.7])
 
-        print("Plotting {} = f({}) to /plots".format(s, argum))
+        print("Plotting {} = f({}) to ".format(s, argum) + path)
 
         # plot for each dataset
         for dat in data:
@@ -78,12 +80,12 @@ def multi_plot(data, argum, argum_unit='-', file_format='png', var_ys=None, var_
             plt.grid(show_grid)
 
         # main formatting
-        plt.xlabel(argum + '[{}]'.format(argum_unit))
+        plt.xlabel(argum + ' [{}]'.format(argum_unit))
         plt.ylabel("{}  [{}]".format(suni, jedn))
         plt.title("Wykres {} w zależności od {}".format(suni, argum))
 
         # plot saving
-        plt.savefig("plots/plot_{}.{}".format(s, file_format), bbox_inches='tight', pad_inches=0.3)
+        plt.savefig(path + "plot_{}=f({}).{}".format(s, argum,file_format), bbox_inches='tight', pad_inches=0.3)
 
         print("Successfully plotted {} = f({})".format(s, argum))
 

@@ -1,5 +1,5 @@
 __pycache__/
-plots/
+plots_*/
 test.py
 *.csv
 deploy.bat
