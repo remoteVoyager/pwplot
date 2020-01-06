@@ -4,14 +4,14 @@ import numpy as np
 import os
 
 
-def multi_plot(data, argum, argum_unit='-', file_format='png', var_ys=None, var_unicodes=None, var_units=None,
-               show_grid=False, show_ptlabels=False, approx=False, approx_ord=2):
+def multi_plot(data, argum, argum_unit='-', of_format='png', of_name=None, var_ys=None, var_unicodes=None,
+               var_units=None, show_grid=False, show_ptlabels=False, approx=False, approx_ord=2):
     """
-
     :param data: DataFrame containing data for plotting
     :param argum: Plotting argument f(argum)
     :param argum_unit: unit for argum
-    :param file_format: output file format
+    :param of_format: output file format
+    :param of_name:
     :param var_ys: variables to plot
     :param var_unicodes: variable unicode representations
     :param var_units: variable units
@@ -33,7 +33,10 @@ def multi_plot(data, argum, argum_unit='-', file_format='png', var_ys=None, var_
     if var_units is None:
         var_units = ['' for i in range(len(var_ys))]
 
-    path = 'plots_' + file_format + '/'
+    if of_name is not None:
+        path = 'plots_' + of_format + '_' + of_name + '/'
+    else:
+        path = 'plots_' + of_format + '/'
 
     if not os.path.exists(path):
         os.mkdir(path)
@@ -85,7 +88,7 @@ def multi_plot(data, argum, argum_unit='-', file_format='png', var_ys=None, var_
         plt.title("Wykres {} w zależności od {}".format(suni, argum))
 
         # plot saving
-        plt.savefig(path + "plot_{}=f({}).{}".format(s, argum,file_format), bbox_inches='tight', pad_inches=0.3)
+        plt.savefig(path + "plot_{}=f({}).{}".format(s, argum, of_format), bbox_inches='tight', pad_inches=0.3)
 
         print("Successfully plotted {} = f({})".format(s, argum))
 
