@@ -2,3 +2,5 @@ __pycache__/
 plots/
 test.py
 *.csv
+deploy.bat
+.idea/

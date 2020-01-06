@@ -1,34 +1,49 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-import numpy as np  
+import numpy as np
 import os
 
-def multi_plot(data, argum, file_format='png', var_s=None, var_s_uni=None, var_jedn=None, show_grid = False, show_ptlabels=False, approx=False, approx_ord=2):
-    """ Function plotting multiple plots for given data """
-    
+
+def multi_plot(data, argum, argum_unit='-', file_format='png', var_ys=None, var_unicodes=None, var_units=None,
+               show_grid=False, show_ptlabels=False, approx=False, approx_ord=2):
+    """
+
+    :param data: DataFrame containing data for plotting
+    :param argum: Plotting argument f(argum)
+    :param argum_unit: unit for argum
+    :param file_format: output file format
+    :param var_ys: variables to plot
+    :param var_unicodes: variable unicode representations
+    :param var_units: variable units
+    :param show_grid:
+    :param show_ptlabels: show points with value at point over them
+    :param approx: approximate plots
+    :param approx_ord: polynomial order for approximation
+    """
+
     # if var_s not provided use dataframe column values
-    if var_s is None:
-        var_s = data[0].columns.values
+    if var_ys is None:
+        var_ys = data[0].columns.values
 
     # if alternate names not provided use dataframe column names
-    if var_s_uni is None:
-        var_s_uni = var_s
+    if var_unicodes is None:
+        var_unicodes = var_ys
 
     # if units not porvided use empty string 
-    if var_jedn is None:
-        var_jedn = ['' for i in range(len(var_s))]
+    if var_units is None:
+        var_units = ['' for i in range(len(var_ys))]
 
     if not os.path.exists('plots/'):
         os.mkdir('plots')
 
     # plotting
-    for s, suni, jedn in zip(var_s, var_s_uni, var_jedn):
-        
+    for s, suni, jedn in zip(var_ys, var_unicodes, var_units):
+
         # figure size definition (currently A4 portrait)
         # TODO: multiple size plots
         plt.figure(figsize=[8.3, 11.7])
 
-        print("Ploting {} = f({}) to /plots".format(s, argum))
+        print("Plotting {} = f({}) to /plots".format(s, argum))
 
         # plot for each dataset
         for dat in data:
@@ -49,30 +64,27 @@ def multi_plot(data, argum, file_format='png', var_s=None, var_s_uni=None, var_j
 
             elif show_ptlabels:
                 plt.plot(dat[argum], dat[s], 'bo-')
-                
-                for x, y in zip(dat[argum], dat[s]):
 
-                    plt.annotate(y, # this is the text
-                            (x,y), # this is the point to label
-                            textcoords="offset points", # how to position the text
-                            xytext=(0,10), # distance from text to points (x,y)
-                            ha='center') # horizontal alignment can be left, right or center
+                for x, y in zip(dat[argum], dat[s]):
+                    plt.annotate(y,  # this is the text
+                                 (x, y),  # this is the point to label
+                                 textcoords="offset points",  # how to position the text
+                                 xytext=(0, 10),  # distance from text to points (x,y)
+                                 ha='center')  # horizontal alignment can be left, right or center
 
             else:
                 plt.plot(dat[argum], dat[s], 'b')
-            
+
             plt.grid(show_grid)
 
-
         # main formatting
-        plt.xlabel("I\N{SUBSCRIPT TWO} [A]")
+        plt.xlabel(argum + '[{}]'.format(argum_unit))
         plt.ylabel("{}  [{}]".format(suni, jedn))
-        plt.title("Wykres {} w zależności od I\N{SUBSCRIPT TWO}".format(suni))
-            
+        plt.title("Wykres {} w zależności od {}".format(suni, argum))
+
         # plot saving
         plt.savefig("plots/plot_{}.{}".format(s, file_format), bbox_inches='tight', pad_inches=0.3)
 
-        print("Succesfully plotted {} = f({})".format(s, 'P2'))
+        print("Successfully plotted {} = f({})".format(s, argum))
 
     print("Plotting Finished")
-
