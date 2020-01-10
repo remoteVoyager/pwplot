@@ -4,14 +4,15 @@ import numpy as np
 import os
 
 
-def multi_plot(data, argum, argum_unit='-', of_format='png', of_name=None, var_ys=None, var_unicodes=None,
+def multi_plot(data, argum, argum_unit='-', of_format='png', od_name='', of_size=False, var_ys=None, var_unicodes=None,
                var_units=None, show_grid=False, show_ptlabels=False, approx=False, approx_ord=2):
     """
     :param data: DataFrame containing data for plotting
     :param argum: Plotting argument f(argum)
     :param argum_unit: unit for argum
     :param of_format: output file format
-    :param of_name:
+    :param od_name: string added to output directory name
+    :param of_size: size of figure, default: None -> standard pyplot size
     :param var_ys: variables to plot
     :param var_unicodes: variable unicode representations
     :param var_units: variable units
@@ -33,20 +34,32 @@ def multi_plot(data, argum, argum_unit='-', of_format='png', of_name=None, var_y
     if var_units is None:
         var_units = ['' for i in range(len(var_ys))]
 
-    if of_name is not None:
-        path = 'plots_' + of_format + '_' + of_name + '/'
+    if od_name is not None:
+        path = 'plots_' + of_format + '_' + od_name + '/'
     else:
         path = 'plots_' + of_format + '/'
 
     if not os.path.exists(path):
         os.mkdir(path)
 
+    # check if arguments were passed as list
+    if type(argum) == list:
+        # TODO: passing list of arguments
+        pass
+
     # plotting
     for s, suni, jedn in zip(var_ys, var_unicodes, var_units):
 
         # figure size definition (currently A4 portrait)
         # TODO: multiple size plots
-        plt.figure(figsize=[8.3, 11.7])
+
+        if of_size:
+            if of_size == 'A4':
+                plt.figure(figsize=[8.3, 11.7])
+            elif of_size == 'A4_l':
+                plt.figure(figsize=[11.7, 8.3])
+        else:
+            plt.figure()
 
         print("Plotting {} = f({}) to ".format(s, argum) + path)
 
