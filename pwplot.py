@@ -47,6 +47,10 @@ def multi_plot(data, argum, argum_unit='-', of_format='png', od_name='', of_size
         # TODO: passing list of arguments
         pass
 
+    # temporary color solution
+    # TODO: color solution: fix later
+    colors = ['r', 'g', 'y', 'v']
+
     # plotting
     for s, suni, jedn in zip(var_ys, var_unicodes, var_units):
 
@@ -64,7 +68,8 @@ def multi_plot(data, argum, argum_unit='-', of_format='png', od_name='', of_size
         print("Plotting {} = f({}) to ".format(s, argum) + path)
 
         # plot for each dataset
-        for dat in data:
+        for dat, color in zip(data, colors):
+
             if approx:
                 plt.plot(dat[argum], dat[s], 'b.')
 
@@ -76,22 +81,20 @@ def multi_plot(data, argum, argum_unit='-', of_format='png', od_name='', of_size
 
                 xnew = np.linspace(x.min(), x.max(), 100)
 
-                plt.plot(xnew, fp(xnew), 'r')
+                plt.plot(xnew, fp(xnew))
 
-                plt.legend(suni, suni + 'aproksymacja w. st. {}'.format(approx_ord))
+                # plt.legend(suni, '{} aproksymacja w. st. {}'.format(suni, approx_ord))
 
-            elif show_ptlabels:
-                plt.plot(dat[argum], dat[s], 'bo-')
+            else:
+                plt.plot(dat[argum], dat[s], 'b')
 
+            if show_ptlabels:
                 for x, y in zip(dat[argum], dat[s]):
                     plt.annotate(y,  # this is the text
                                  (x, y),  # this is the point to label
                                  textcoords="offset points",  # how to position the text
                                  xytext=(0, 10),  # distance from text to points (x,y)
                                  ha='center')  # horizontal alignment can be left, right or center
-
-            else:
-                plt.plot(dat[argum], dat[s], 'b')
 
             plt.grid(show_grid)
 
