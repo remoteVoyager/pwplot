@@ -4,9 +4,10 @@ import numpy as np
 import os
 
 
-def multi_plot(data, argum, argum_unit='-', of_format='png', od_name='', of_size=False, var_ys=None, var_unicodes=None,
-               var_units=None, show_grid=False, show_ptlabels=False, approx=False, approx_ord=2):
+def multi_plot(data, argum, argum_unit='-', of_format='png', of_size=False, od_name='', data_fnames=None,  var_ys=None, var_unicodes=None,
+               var_units=None, approx=False, approx_ord=2, show_grid=False, show_ptlabels=False):
     """
+    :param data_fnames: names of files passed via data
     :param data: DataFrame containing data for plotting
     :param argum: Plotting argument f(argum)
     :param argum_unit: unit for argum
@@ -49,29 +50,35 @@ def multi_plot(data, argum, argum_unit='-', of_format='png', od_name='', of_size
 
     # temporary color solution
     # TODO: color solution: fix later
-    colors = ['r', 'g', 'y', 'v']
+    colors = ['b', 'g', 'm', 'r']
 
     # plotting
     for s, suni, jedn in zip(var_ys, var_unicodes, var_units):
 
         # figure size definition (currently A4 portrait)
         # TODO: multiple size plots
-
+        # TODO: change to dict
         if of_size:
             if of_size == 'A4':
                 plt.figure(figsize=[8.3, 11.7])
             elif of_size == 'A4_l':
                 plt.figure(figsize=[11.7, 8.3])
+            elif of_size == 'A5_l':
+                plt.figure(figsize=[8.3, 11.7/2])
+            else:
+                print(50*'=' + '\nNot supported plot size: {}\nUsing pyplot default\n'.format(of_size) + 50*'=')
+                plt.figure()
         else:
             plt.figure()
 
         print("Plotting {} = f({}) to ".format(s, argum) + path)
 
+
         # plot for each dataset
-        for dat, color in zip(data, colors):
+        for dat, color, dat_name in zip(data, colors, data_fnames):
 
             if approx:
-                plt.plot(dat[argum], dat[s], 'b.')
+                plt.plot(dat[argum], dat[s],  '.', color=color, label=None)
 
                 x = dat[argum].to_numpy().astype(np.float)
                 y = dat[s].to_numpy().astype(np.float)
@@ -81,9 +88,9 @@ def multi_plot(data, argum, argum_unit='-', of_format='png', od_name='', of_size
 
                 xnew = np.linspace(x.min(), x.max(), 100)
 
-                plt.plot(xnew, fp(xnew))
+                new_label = '{} aproks. st. {}'.format(dat_name, approx_ord)
 
-                # plt.legend(suni, '{} aproksymacja w. st. {}'.format(suni, approx_ord))
+                plt.plot(xnew, fp(xnew), color=color, label=new_label)
 
             else:
                 plt.plot(dat[argum], dat[s], 'b')
@@ -96,7 +103,10 @@ def multi_plot(data, argum, argum_unit='-', of_format='png', od_name='', of_size
                                  xytext=(0, 10),  # distance from text to points (x,y)
                                  ha='center')  # horizontal alignment can be left, right or center
 
-            plt.grid(show_grid)
+        plt.grid(show_grid)
+
+        plt.legend()
+
 
         # main formatting
         plt.xlabel(argum + ' [{}]'.format(argum_unit))
