@@ -6,6 +6,7 @@ import os
 
 def multi_plot(data, argum, argum_unit='-', of_format='png', of_size=False, od_name='', data_fnames=None, var_ys=None,
                var_unicodes=None, var_units=None, approx=False, approx_ord=2, show_grid=False, show_ptlabels=False):
+
     """
     :param data_fnames: names of files passed via data
     :param data: DataFrame containing data for plotting
@@ -52,8 +53,8 @@ def multi_plot(data, argum, argum_unit='-', of_format='png', of_size=False, od_n
         pass
 
     # temporary color solution
-    # TODO: color solution: fix later
-    colors = ['b', 'g', 'm', 'r']
+    # TODO: color solution: fix later -> possibly add option to select shades of color for multiple plots
+    colors = ['b', 'g', 'm', 'r']   # temporary solution
 
     # plotting
     for s, suni, jedn in zip(var_ys, var_unicodes, var_units):
@@ -72,9 +73,7 @@ def multi_plot(data, argum, argum_unit='-', of_format='png', of_size=False, od_n
 
         # plot for each dataset
         for dat, color, dat_name in zip(data, colors, data_fnames):
-
             if approx:
-
                 # plotting point graph
                 plt.plot(dat[argum], dat[s], '.', color=color, label=None)
 
