@@ -4,9 +4,19 @@ import numpy as np
 import os
 
 
+def plot_color():
+    # TODO: seperate plot color generation function
+    pass
+
+
+def simple_plot(x, y, x_names, y_names, of_format='png', of_size=False, show_grid=False, show_ptlabels=False,
+                approx=False, approx_ord=2):
+    # TODO: non DataFrame plotting solution for quick simple plots
+    pass
+
+
 def multi_plot(data, argum, argum_unit='-', of_format='png', of_size=False, od_name='', data_fnames=None, var_ys=None,
                var_unicodes=None, var_units=None, approx=False, approx_ord=2, show_grid=False, show_ptlabels=False):
-
     """
     :param data_fnames: names of files passed via data
     :param data: DataFrame containing data for plotting
@@ -54,7 +64,7 @@ def multi_plot(data, argum, argum_unit='-', of_format='png', of_size=False, od_n
 
     # temporary color solution
     # TODO: color solution: fix later -> possibly add option to select shades of color for multiple plots
-    colors = ['b', 'g', 'm', 'r']   # temporary solution
+    colors = ['b', 'g', 'm', 'r']  # temporary solution
 
     # plotting
     for s, suni, jedn in zip(var_ys, var_unicodes, var_units):
