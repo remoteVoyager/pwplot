@@ -4,9 +4,22 @@ import numpy as np
 import os
 
 
-def multi_plot(data, argum, argum_unit='-', of_format='png', od_name='', of_size=False, var_ys=None, var_unicodes=None,
-               var_units=None, show_grid=False, show_ptlabels=False, approx=False, approx_ord=2):
+def plot_color():
+    # TODO: seperate plot color generation function
+    pass
+
+
+def simple_plot(x, y, x_names, y_names, of_format='png', of_size=False, show_grid=False, show_ptlabels=False,
+                approx=False, approx_ord=2):
+    # TODO: non DataFrame plotting solution for quick simple plots
+    pass
+
+
+def multi_plot(data, argum, argum_unit='-', of_format='png', of_size=False, od_name='', data_fnames=None, var_ys=None,
+               var_unicodes=None, var_units=None, approx=False, approx_ord=2, show_grid=False, show_ptlabels=False,
+               xscale='linear', yscale='linear'):
     """
+    :param data_fnames: names of files passed via data
     :param data: DataFrame containing data for plotting
     :param argum: Plotting argument f(argum)
     :param argum_unit: unit for argum
@@ -20,7 +33,12 @@ def multi_plot(data, argum, argum_unit='-', of_format='png', od_name='', of_size
     :param show_ptlabels: show points with value at point over them
     :param approx: approximate plots
     :param approx_ord: polynomial order for approximation
+    :param xscale:
+    :param yscale:
     """
+
+    # availible plot size dict
+    plot_size = {'A4': [8.3, 11.7], 'A4_l': [11.7, 8.3], 'A5_l': [8.3, 11.7 / 2]}
 
     # if var_s not provided use dataframe column values
     if var_ys is None:
@@ -47,26 +65,30 @@ def multi_plot(data, argum, argum_unit='-', of_format='png', od_name='', of_size
         # TODO: passing list of arguments
         pass
 
+    # temporary color solution
+    # TODO: color solution: fix later -> possibly add option to select shades of color for multiple plots
+    colors = ['b', 'g', 'm', 'r']  # temporary solution
+
     # plotting
     for s, suni, jedn in zip(var_ys, var_unicodes, var_units):
 
-        # figure size definition (currently A4 portrait)
-        # TODO: multiple size plots
-
+        # figure size definition
         if of_size:
-            if of_size == 'A4':
-                plt.figure(figsize=[8.3, 11.7])
-            elif of_size == 'A4_l':
-                plt.figure(figsize=[11.7, 8.3])
+            if of_size in plot_size.keys():
+                plt.figure(figsize=plot_size[of_size])
+            else:
+                print(50 * '=' + '\nNot supported plot size: {}\nUsing pyplot default\n'.format(of_size) + 50 * '=')
+                plt.figure()
         else:
             plt.figure()
 
         print("Plotting {} = f({}) to ".format(s, argum) + path)
 
         # plot for each dataset
-        for dat in data:
+        for dat, color, dat_name in zip(data, colors, data_fnames):
             if approx:
-                plt.plot(dat[argum], dat[s], 'b.')
+                # plotting point graph
+                plt.plot(dat[argum], dat[s], '.', color=color, label=None)
 
                 x = dat[argum].to_numpy().astype(np.float)
                 y = dat[s].to_numpy().astype(np.float)
@@ -76,32 +98,35 @@ def multi_plot(data, argum, argum_unit='-', of_format='png', od_name='', of_size
 
                 xnew = np.linspace(x.min(), x.max(), 100)
 
-                plt.plot(xnew, fp(xnew), 'r')
+                new_label = '{} aproks. st. {}'.format(dat_name, approx_ord)
 
-                plt.legend(suni, suni + 'aproksymacja w. st. {}'.format(approx_ord))
-
-            elif show_ptlabels:
-                plt.plot(dat[argum], dat[s], 'bo-')
-
-                for x, y in zip(dat[argum], dat[s]):
-                    plt.annotate(y,  # this is the text
-                                 (x, y),  # this is the point to label
-                                 textcoords="offset points",  # how to position the text
-                                 xytext=(0, 10),  # distance from text to points (x,y)
-                                 ha='center')  # horizontal alignment can be left, right or center
+                plt.plot(xnew, fp(xnew), color=color, label=new_label)
 
             else:
                 plt.plot(dat[argum], dat[s], 'b')
 
-            plt.grid(show_grid)
+        # global plot formatting
+        plt.grid(show_grid)
 
-        # main formatting
+        plt.xscale(xscale)
+
+        plt.yscale(yscale)
+
+        plt.legend()
+
+        # plot labeling
         plt.xlabel(argum + ' [{}]'.format(argum_unit))
         plt.ylabel("{}  [{}]".format(suni, jedn))
         plt.title("Wykres {} w zależności od {}".format(suni, argum))
 
         # plot saving
-        plt.savefig(path + "plot_{}=f({}).{}".format(s, argum, of_format), bbox_inches='tight', pad_inches=0.3)
+        # path creation
+        save_path = path + "plot_{}=f({})".format(s, argum)
+        if approx:
+            save_path += '_approx={}'.format(approx_ord)
+
+        # saving
+        plt.savefig(save_path + '.{}'.format(of_format))
 
         print("Successfully plotted {} = f({})".format(s, argum))
 
