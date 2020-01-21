@@ -16,7 +16,8 @@ def simple_plot(x, y, x_names, y_names, of_format='png', of_size=False, show_gri
 
 
 def multi_plot(data, argum, argum_unit='-', of_format='png', of_size=False, od_name='', data_fnames=None, var_ys=None,
-               var_unicodes=None, var_units=None, approx=False, approx_ord=2, show_grid=False, show_ptlabels=False):
+               var_unicodes=None, var_units=None, approx=False, approx_ord=2, show_grid=False, show_ptlabels=False,
+               xscale='linear', yscale='linear'):
     """
     :param data_fnames: names of files passed via data
     :param data: DataFrame containing data for plotting
@@ -32,6 +33,8 @@ def multi_plot(data, argum, argum_unit='-', of_format='png', of_size=False, od_n
     :param show_ptlabels: show points with value at point over them
     :param approx: approximate plots
     :param approx_ord: polynomial order for approximation
+    :param xscale:
+    :param yscale:
     """
 
     # availible plot size dict
@@ -102,25 +105,28 @@ def multi_plot(data, argum, argum_unit='-', of_format='png', of_size=False, od_n
             else:
                 plt.plot(dat[argum], dat[s], 'b')
 
-            if show_ptlabels:
-                for x, y in zip(dat[argum], dat[s]):
-                    plt.annotate(y,  # this is the text
-                                 (x, y),  # this is the point to label
-                                 textcoords="offset points",  # how to position the text
-                                 xytext=(0, 10),  # distance from text to points (x,y)
-                                 ha='center')  # horizontal alignment can be left, right or center
-
+        # global plot formatting
         plt.grid(show_grid)
+
+        plt.xscale(xscale)
+
+        plt.yscale(yscale)
 
         plt.legend()
 
-        # main formatting
+        # plot labeling
         plt.xlabel(argum + ' [{}]'.format(argum_unit))
         plt.ylabel("{}  [{}]".format(suni, jedn))
         plt.title("Wykres {} w zależności od {}".format(suni, argum))
 
         # plot saving
-        plt.savefig(path + "plot_{}=f({}).{}".format(s, argum, of_format), bbox_inches='tight', pad_inches=0.3)
+        # path creation
+        save_path = path + "plot_{}=f({})".format(s, argum)
+        if approx:
+            save_path += '_approx={}'.format(approx_ord)
+
+        # saving
+        plt.savefig(save_path + '.{}'.format(of_format))
 
         print("Successfully plotted {} = f({})".format(s, argum))
 
